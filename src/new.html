@@ -1,0 +1,72 @@
+// index.html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Solar Data Visualization</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+      .controls {
+        margin: 20px;
+        padding: 10px;
+        background: #f5f5f5;
+        border-radius: 4px;
+      }
+      .chart-container {
+        margin: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="controls">
+      <input type="file" id="csvFile" accept=".csv" />
+      <span>or</span>
+      <button id="loadSampleData">Load Sample Data</button>
+    </div>
+    <div id="chart-container" class="chart-container"></div>
+    <script src="solarDashboard.js"></script>
+    <script>
+      // Initialize the dashboard
+      const dashboard = new TMYSolarDashboard("#chart-container");
+
+      // Handle file input
+      document.getElementById("csvFile").addEventListener("change", (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const text = e.target.result;
+            const data = d3.csvParse(text, (d) => ({
+              date: new Date(d.period_end),
+              dni: +d.dni,
+              ghi: +d.ghi,
+              dhi: +d.dhi,
+            }));
+            dashboard.processData(data);
+            dashboard.updateChart();
+          };
+          reader.readAsText(file);
+        }
+      });
+
+      // Handle sample data loading
+      document
+        .getElementById("loadSampleData")
+        .addEventListener("click", () => {
+          // Replace 'your-data.csv' with actual path to your CSV file
+          fetch("Indore.csv")
+            .then((response) => response.text())
+            .then((text) => {
+              const data = d3.csvParse(text, (d) => ({
+                date: new Date(d.period_end),
+                dni: +d.dni,
+                ghi: +d.ghi,
+                dhi: +d.dhi,
+              }));
+              dashboard.processData(data);
+              dashboard.updateChart();
+            })
+            .catch((error) => console.error("Error loading data:", error));
+        });
+    </script>
+  </body>
+</html>
