@@ -131,19 +131,8 @@
 
 /* App.css */
 
-body {
-  background-color: #0d1b2a;
-  color: #ffffff;
-}
 
-h4 {
-  color: #ffffff;
-}
-
-.card {
-  background-color: #1b263b;
-}
-
-.card-body {
-  color: #adb5bd;
-}
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
