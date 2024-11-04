@@ -5,7 +5,8 @@ import CurrentWeather from "./components/CurrentWeather";
 import AirConditions from "./components/AirConditions";
 import TodayForecast from "./components/TodayForecast";
 import WeeklyForecast from "./components/WeeklyForecast";
-import { Container, Row, Col } from "react-bootstrap";
+import Navbar from "./components/Navbar";
+import BackgroundImage from "./components/Backgroundimage";
 import "./weather.css";
 
 const OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast";
@@ -14,7 +15,8 @@ function App() {
   const [weatherData, setWeatherData] = useState(null);
   const [location, setLocation] = useState("");
 
-  const handleSearch = async (latitude, longitude) => {
+  const handleSearch = async (latitude, longitude, city) => {
+    setLocation(city);
     try {
       const response = await axios.get(OPEN_METEO_URL, {
         params: {
@@ -37,31 +39,39 @@ function App() {
   };
 
   return (
-    <Container fluid className="app-container">
-      <Row className="justify-content-center mt-4">
-        <Col md={8}>
-          <SearchBar onSearch={handleSearch} />
+    <div className="min-h-screen">
+      <div className="w-full border-[1.5px] min-h-screen flex flex-col justify-center border-white rounded-2xl">
+        <BackgroundImage image={"url('/imgs/bg.jpg')"} />
+        {/* <Row>
+        <Col>
+          <Navbar />
         </Col>
-      </Row>
+      </Row> */}
+        <div className="w-full flex justify-center items-center text-center pt-4">
+          <div>
+            <SearchBar onSearch={handleSearch} />
+          </div>
+        </div>
 
-      {weatherData && (
-        <Row className="mt-4">
-          {/* Left Column - Current Weather, Air Conditions, Today's Forecast */}
-          <Col md={8}>
-            <div className="left-column">
-              <CurrentWeather weatherData={weatherData} location={location} />
-              <AirConditions weatherData={weatherData} />
-              <TodayForecast weatherData={weatherData} />
+        {weatherData && (
+          <div className="p-4 min-h-full flex w-full">
+            {/* Left Column - Current Weather, Air Conditions, Today's Forecast */}
+            <div md={4} className="w-[65%] min-h-full">
+              <div className="min-h-full flex flex-col justify-between">
+                <CurrentWeather weatherData={weatherData} location={location} />
+                <AirConditions weatherData={weatherData} />
+                <TodayForecast weatherData={weatherData} />
+              </div>
             </div>
-          </Col>
 
-          {/* Right Column - Weekly Forecast */}
-          <Col md={4}>
-            <WeeklyForecast weatherData={weatherData} />
-          </Col>
-        </Row>
-      )}
-    </Container>
+            {/* Right Column - Weekly Forecast */}
+            <div className="w-[35%] min-h-full">
+              <WeeklyForecast weatherData={weatherData} />
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
